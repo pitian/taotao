@@ -1,8 +1,9 @@
 package common.pojo;
 
+import java.io.Serializable;
 import java.util.List;
 
-public class EasyUIDataGrideResult {
+public class EasyUIDataGrideResult implements Serializable {
 	private long total;
 	private List<?> rows;
 	public long getTotal() {

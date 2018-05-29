@@ -1,6 +1,8 @@
 package common.pojo;
 
-public class EasyUITreeNode {
+import java.io.Serializable;
+
+public class EasyUITreeNode implements Serializable{
 	private long id;
 	private String text;
 	private String state;
