@@ -2,14 +2,19 @@ package com.taotao.service.impl;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.taotao.mapper.TbItemDescMapper;
 import com.taotao.mapper.TbItemMapper;
 import com.taotao.pojo.TbItem;
+import com.taotao.pojo.TbItemDesc;
 import com.taotao.pojo.TbItemExample;
 import com.taotao.service.ItemService;
 import common.pojo.EasyUIDataGrideResult;
+import common.pojo.TaotaoResult;
+import common.utils.IDUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -19,6 +24,8 @@ import java.util.List;
 public class ItemServiceImpl implements ItemService {
     @Autowired
     private TbItemMapper tbItemMapper;
+    @Autowired
+    private TbItemDescMapper tbItemDescMapper;
     @Override
     public TbItem getItemById(long itemId) throws Exception {
         TbItem tbItem = tbItemMapper.selectByPrimaryKey(itemId);
@@ -35,5 +42,23 @@ public class ItemServiceImpl implements ItemService {
         result.setTotal(pageInfo.getTotal());
         result.setRows(tbItemList);
         return result;
+    }
+
+    @Override
+    public TaotaoResult addItem(TbItem tbItem, String desc) throws Exception {
+        //1.生成id年月日时分秒
+        long itemId = IDUtils.genItemId();
+        tbItem.setId(itemId);
+        tbItem.setStatus((byte)1);
+        tbItem.setCreated(new Date());
+        tbItem.setUpdated(new Date());
+        tbItemMapper.insert(tbItem);
+        TbItemDesc tbItemDesc = new TbItemDesc();
+        tbItemDesc.setItemId(itemId);
+        tbItemDesc.setItemDesc(desc);
+        tbItemDesc.setCreated(new Date());
+        tbItemDesc.setUpdated(new Date());
+        tbItemDescMapper.insert(tbItemDesc);
+        return TaotaoResult.ok();
     }
 }
