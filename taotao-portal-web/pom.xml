@@ -7,7 +7,7 @@
         <version>0.0.1-SNAPSHOT</version>
     </parent>
     <groupId>com.taotao</groupId>
-    <artifactId>taotao-manager-web</artifactId>
+    <artifactId>taotao-portal-web</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <packaging>war</packaging>
     <dependencies>
