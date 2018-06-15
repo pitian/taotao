@@ -29,4 +29,4 @@
 
 	<dubbo:reference interface="com.taotao.service.ItemService" id="itemService" />
 	<dubbo:reference interface="com.taotao.service.ItemCatService" id="itemCatService" />
-</beans>      
+</beans>

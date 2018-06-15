@@ -1,6 +1,5 @@
 package com.taotao.content.service.impl;
 
-import com.sun.javafx.beans.annotations.Default;
 import com.taotao.content.service.ContentCategoryService;
 import com.taotao.mapper.TbContentCategoryMapper;
 import com.taotao.pojo.TbContentCategory;
@@ -23,14 +22,13 @@ public class ContentCategoryServiceImpl implements ContentCategoryService {
         criteria.andParentIdEqualTo(parentId);
         List<TbContentCategory> tbContentCategoryList = tbContentCategoryMapper.selectByExample(tbContentCategoryExample);
         List<EasyUITreeNode> easyUITreeNodes = new ArrayList<EasyUITreeNode>();
-        if(null!=null){
-            for(int i=0;i<tbContentCategoryList.size();i++){
-                EasyUITreeNode easyUITreeNode = new EasyUITreeNode();
-                easyUITreeNode.setState(String.valueOf(tbContentCategoryList.get(i).getStatus()));
-                easyUITreeNode.setText(tbContentCategoryList.get(i).getName());
-                easyUITreeNode.setId(tbContentCategoryList.get(i).getId());
-                easyUITreeNodes.add(easyUITreeNode);
-            }
+        for (TbContentCategory tbContentCategory : tbContentCategoryList) {
+            EasyUITreeNode node = new EasyUITreeNode();
+            node.setId(tbContentCategory.getId());
+            node.setText(tbContentCategory.getName());
+            node.setState(tbContentCategory.getIsParent()?"closed":"open");
+            //添加到结果列表
+            easyUITreeNodes.add(node);
         }
         return easyUITreeNodes;
     }
