@@ -9,4 +9,5 @@ import java.util.List;
 public interface ContentService {
     public EasyUIDataGrideResult getContentList(Long categoryId,int page, int rows)throws Exception;
     public TaotaoResult addContent(TbContent tbContent) throws Exception;
+    public List<TbContent> getContentByCid(long cid)  throws Exception;
 }
