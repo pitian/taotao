@@ -1,0 +1,63 @@
+redis安装步骤(redis是C语言开发的)
+1.首先需要C语言编译环境 如果没有  yum install gcc-c++
+2.然后解压redis源码安装包 tar zxf XXXXXXXXXXXXX
+3.编译redis源码 make
+4.安装 redis  make install 路径结构。一般在 PREFIX=/usr/local/redis
+5.启动redis服务两种方式:前端启动模式(会占用一个终端)/后端启动模式(建议使用)
+前端启动模式:./redis-server
+后端启动模式：需要在源码中找到一个配置文件 redis.conf  复制到安装路径下 .表示当前目录
+				修改redis.conf yes
+			./redis-server redis.conf
+6.连接服务 ./redis-cli -h 192.168.25.128 -p 6379
+
+redis数据都是放在内存里的，如果不配置持久化，redis重启数据就会丢失.将数据保存到磁盘里
+redis常用的命令
+1.五种数据类型:String(key-value) hash(hash里还有key-value) list set zset
+
+2	①.	set str1 12345
+		get str1
+		incr str1  (+1)
+		decr str1 (-1)
+	②.	hset hash1 field1 abc
+		hget hash2 field1
+		
+		ttl:查看key有效期 -1 永久有效 -2 不存在  正数表示存在还有多少秒
+		expire str1 100(s) 设置str1的有效期为100秒
+		
+		keys *查看当前数据库有多少个key
+		
+memcached类似
+		
+Java 客户端 (Jedis)
+
+public class TestJedis {
+    @Test
+    public void testJedis()throws Exception{
+        Jedis jedis = new Jedis("192.168.25.128",6379);
+        jedis.set("jedis-key","1234");
+        String result = jedis.get("jedis-key");
+        System.out.println(result);
+        jedis.close();
+    }
+
+    @Test
+    public void testJedisPool(){
+        JedisPool jedisPool = new JedisPool("192.168.25.128",6379);//单例
+        Jedis jedis = jedisPool.getResource();//在方法内使用
+        String result = jedis.get("jedis-key");
+        System.out.println(result);
+        jedis.close();//一定要关闭连接
+        jedisPool.close();
+    }
+}
+
+
+redis数据持久化两种方式:RDB (定期保存)  AOF
+RDB:原理是将Reids在内存中的数据库记录定时dump到磁盘上的RDB持久化
+AOF(append only file) ：原理是将Reids的操作日志以追加的方式写入文件
+
+#######################################################
+Cannot instantiate test(s): java.lang.SecurityException: Prohibited package name: java.com.taotao.jedis
+
+
+虚拟机不允许包名以java开头

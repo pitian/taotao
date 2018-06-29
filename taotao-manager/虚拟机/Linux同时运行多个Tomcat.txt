@@ -1,0 +1,106 @@
+Linux同时运行多个Tomcat
+2017年05月22日 17:00:53
+阅读数：3277
+背景：起初是这样的：在一个tomact里放了好多个web项目，启动过，过一段时间，发现不能正常访问，现象就是感觉tomcat已经关闭了。查看日志发现：tomcat报错了<java.lang.OutOfMemoryError:PermGen space>,这才知道内存溢出了。FK！！！原来的放的项目太多了，这样就需要配置多个tomcat。
+
+每个tomcat都有自己的端口和监听的端口，那么要多个运行，就必须使用不同的端口，具体怎么操作呢，看下面：
+
+1）需要JDK作为支撑，这里就不做处理了，我这里的目录：/usr/local/jdk7
+
+2）首先下载对应的linux下的tomcat版本，存放于2个目录，这里以/usr/local/tomcat01和/usr/local/tomcat02为例，多个以此类推。这里tomcat01为了统一，就也把默认配置改掉了。
+
+3）首先，将tomcat02的根目录配置到/etc/profile中,如下：
+/usr/local/solr/tomcat
+export JAVA_HOME=/usr/local/jdk7
+export CLASSPATH=.:$JAVA_HOME/lib/dt.jar:$JAVA_HOME/lib/tools.jar
+export PATH=$JAVA_HOME/bin:$PATH
+
+CATALINA_BASE=/root/apache-tomcat-7.0.47
+CATALINA_HOME=/root/apache-tomcat-7.0.47
+export CATALINA_BASE CATALINA_HOME
+
+CATALINA_2_BASE=/usr/local/solr/tomcat
+CATALINA_2_HOME=/usr/local/solr/tomcat
+export CATALINA_2_BASE CATALINA_2_HOME
+
+CATALINA_3_BASE=/usr/local/solr-cloud/tomcat01
+CATALINA_3_HOME=/usr/local/solr-cloud/tomcat01
+export CATALINA_3_BASE CATALINA_3_HOME
+
+
+CATALINA_4_BASE=/usr/local/solr-cloud/tomcat02
+CATALINA_4_HOME=/usr/local/solr-cloud/tomcat02
+export CATALINA_4_BASE CATALINA_4_HOME
+
+CATALINA_5_BASE=/usr/local/solr-cloud/tomcat03
+CATALINA_5_HOME=/usr/local/solr-cloud/tomcat03
+export CATALINA_5_BASE CATALINA_5_HOME
+
+CATALINA_6_BASE=/usr/local/solr-cloud/tomcat04
+CATALINA_6_HOME=/usr/local/solr-cloud/tomcat04
+export CATALINA_6_BASE CATALINA_6_HOME
+
+
+TOMCAT_HOME=/root/apache-tomcat-7.0.47
+export TOMCAT_HOME
+TOMCAT_2_HOME=/usr/local/solr/tomcat
+export TOMCAT_2_HOME
+TOMCAT_3_HOME=/usr/local/solr-cloud/tomcat01
+export TOMCAT_3_HOME
+TOMCAT_4_HOME=/usr/local/solr-cloud/tomcat02
+export TOMCAT_4_HOME
+TOMCAT_5_HOME=/usr/local/solr-cloud/tomcat03
+export TOMCAT_5_HOME
+TOMCAT_6_HOME=/usr/local/solr-cloud/tomcat04
+export TOMCAT_6_HOME
+
+配置完成后，执行source /etc/profile 使之生效。
+4）修改对应tomcat下conf目录下的server.xml文件，指定其对应端口号。
+
+tomcat01的，修改如下：第一个地方：修改关闭监听端口，默认8005,修改为8051，当然你可以改成其他任意没有用过的端口号。
+
+<Server port="8051" shutdown="SHUTDOWN">
+  <Listener className="org.apache.catalina.startup.VersionLoggerListener" />
+第二个地方：修改http监听端口，默认8080，这里改成8081，我这里加了下其他配置。
+<Connector
+         port="8081" protocol="org.apache.coyote.http11.Http11NioProtocol"
+         URIEncoding="UTF-8"
+         minSpareThreads="1000"
+         maxSpareThreads="4000"
+         enableLookups="false"
+         disableUploadTimeout="true"
+         connectionTimeout="20000"
+         acceptCount="4000"
+         maxThreads="5000"
+         maxProcessors="5000"
+         minProcessors="100"
+         useURIValidationHack="false"
+         compression="on"
+         compressionMinSize="2048"
+        compressableMimeType="text/html,text/xml,text/javascript,text/css,text/plain"
+         redirectPort="8443" />
+第三个地方：修改 AJP 的对应端口，默认8009，修改为9080:
+<Connector port="9080" protocol="AJP/1.3" redirectPort="8443" />
+好了，这样就把第一个的server.xml配置修改完成了。第二个tomca02的配置类似，3个端口我设置的是：8052,8083,9081
+5）修改tomcat/bin下的启动脚本，其实就是添加几行代码，如在tomcat01的startup.sh和shutdown.sh文件中添加如下代码：
+
+# -----------------------------------------------------------------------------
+# Start Script for the CATALINA Server
+# -----------------------------------------------------------------------------
+ 
+export JAVA_HOME=/usr/local/jdk7
+export PATH=$PATH:$JAVA_HOME/bin
+export CLASSPATH=$JAVA_HOME/lib
+export CATALINA_HOME=$CATALINA_HOME
+export CATALINA_BASE=$CATALINA_BASE
+ 
+# Better OS/400 detection: see Bugzilla 31132
+[注：]上下被#注释掉的地方，是为了方便大家找到添加的位置，是原来文件中的内容，我们这里添加的是export开头的代码。
+那么对应的tomcat02配置如下；
+
+export JAVA_HOME=/usr/local/jdk7
+export PATH=$PATH:$JAVA_HOME/bin
+export CLASSPATH=$JAVA_HOME/lib
+export CATALINA_HOME=$CATALINA_2_HOME
+export CATALINA_BASE=$CATALINA_2_BASE
+哦了，这样就完成了linux中多个tomcat的配置。下面就可以在每个tomcat/bin目录下分别执行./startup.sh了。最后在浏览器中分别输入http://localhost:8081和http://localhost:8083就可以看到，已经配置成功了。

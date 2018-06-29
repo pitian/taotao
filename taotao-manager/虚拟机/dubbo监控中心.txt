@@ -1,0 +1,10 @@
+dubbo 的监控中心配置(dubbo-admin)
+1.将dubbo-admin 和 zookeeper安装在同一台服务上(建议)
+	如果安装在不同的服务器上，需要修改 dubbo-admin 下的dubbo.properties 文件.
+	将address 改为zookeeper 的服务器地址
+2.需要在服务器上安装 tomcat 
+3.将 .war 包放在 webapp 下
+4.然后启动 tomcat
+
+
+启动成功前提是，zk得启动

@@ -1,0 +1,41 @@
+本机的操作系统为 Centos6.5 32位   iso文件在 E:E:\centos 6.5.32 下 ，共两个DVD文件
+安装的JDK 也为 32 位的
+
+根用户秘密:
+root/Maozheng123
+普通用户:
+pitian/Pitian19930123
+
+###################
+##kdump
+##system-config-kdump
+###################
+一.卸载Linux自带的jdk
+1.查看CentOS6.5自带的JDK是否已经安装
+#Java -version
+2.查看JDK的信息
+#rpm -qa|grep java
+3.卸载JDK
+
+#rpm -e --nodeps tzdata-java-2013g-1.el6.noarch
+
+#rpm -e --nodeps java-1.7.0-openjdk-1.7.0.45-2.4.3.3.el6.x86_64
+
+#rpm -e --nodeps java-1.6.0-openjdk-1.6.0.0-1.66.1.13.0.el6.x86_64
+
+二.安装jdk  
+1.上传Linux版本的jdk到虚拟机上  /root/jdk-7u55-linux-i586.tar.gz
+2.创建存放虚拟机的位置  /usr/local/src/java  mkdir /usr/local/src/java
+3.复制到想放的目录 cp jdk-7u55-linux-i586.tar.gz /usr/local/src/java
+4.解压  tar xf jdk-7u55-linux-i586.tar.gz
+5.配置全局变量  vim /etc/profile
+写入如下:
+JAVA_HOME=/usr/local/src/java/jdk1.7.0_55
+
+JRE_HOME=/usr/local/src/java/jdk1.7.0_55/jre  
+
+PATH=$PATH:/usr/local/src/java/jdk1.7.0_55/bin  
+
+CLASSPATH=./:/usr/local/src/java/jdk1.7.0_55/lib:/usr/local/src/java/jdk1.7.0_55/jre/lib
+
+6.#source /ect/profile

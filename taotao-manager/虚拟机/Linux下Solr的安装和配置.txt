@@ -1,0 +1,70 @@
+Linux下Solr的安装和配置
+一、安装
+
+1.需要的安装包：apache-tomcat-7.0.47.tar.gz、solr-4.10.3.tgz.tgz（jdk自行安装）
+
+2.解压tomcat并创建solr文件夹
+
+[root@localhost ~]# tar -zxf apache-tomcat-7.0.47.tar.gz
+[root@localhost ~]# mkdir /usr/local/solr
+3.将tomcat解压后的文件夹拷贝到solr的tomcat文件夹中
+
+[root@localhost ~]# cp apache-tomcat-7.0.47 /usr/local/solr/tomcat -r
+4.把solr的压缩包上传到服务器后并解压，然后把/root/solr-4.10.3/dist/solr-4.10.3.war包部署到tomcat下。并改名为solr.war
+
+[root@localhost ~]# tar -zxf solr-4.10.3.tgz.tgz
+[root@localhost ~]# cp solr-4.10.3.war /usr/local/solr/tomcat/webapps/solr.war
+5.解压war包。启动tomcat自动解压。然后关闭tomcat，删除war包
+
+6.把/root/solr-4.10.3/example/lib/ext 目录下所有的jar包复制到solr工程中
+
+[root@localhost ext]# cp * /usr/local/solr/tomcat/webapps/solr/WEB-INF/lib/
+7.创建solrhome文件夹，该文件夹用来存放solr服务器所有配置文件。将/root/solr-4.10.3/example中的solr文件夹拷贝至solrhome
+
+[root@localhost example]# cp -r solr /usr/local/solr/solrhome
+8.在solr工程中的web.xml文件中指定solrhome的位置
+<env-entry>
+       <env-entry-name>solr/home</env-entry-name>
+       <env-entry-value>/usr/local/solr/solrhome</env-entry-value>
+       <env-entry-type>java.lang.String</env-entry-type>
+    </env-entry>
+
+
+9.启动tomcat
+
+二、配置
+
+-----中文分析器配置
+
+1.把IK-Analyzer分析器的文件夹上传到服务器
+
+2.把分析器的jar包添加到solr工程中
+
+[root@localhost IKAnalyzer2012FF_hf1]# cp IKAnalyzer2012FF_u1.jar /usr/local/solr/tomcat/webapps/solr/WEB-INF/lib/
+3.把IKAnalyzer需要的扩展词典及停用词词典、配置文件复制到solr工程的WEB-INF/classes文件夹中
+
+[root@localhost IKAnalyzer2012FF_hf1]# cp IKAnalyzer.cfg.xml ext_stopword.dic mydict.dic /usr/local/solr/tomcat/webapps/solr/WEB-INF/classes
+4.在solrhome/collection1/conf/schema.xml中配置 filedType
+<fieldType name="text_ik" class="solr.TextField">
+     <analyzer class="org.wltea.analyzer.lucene.IKAnalyzer"/>
+     </fieldType>
+
+
+-----业务字段配置
+1.在solrhome/collection1/conf/schema.xml中配置，根据业务需要选择相应的字段对应solr的字段
+
+<field name="user_name" type="text_ik" indexed="true" stored="true"/>
+<field name="user_address"  type="text_ik" indexed="true" stored="true"/>
+
+<field name="item_keywords" type="text_ik" indexed="true" stored="false" multiValued="true"/>
+<copyField source="user_name" dest="item_keywords"/>
+<copyField source="user_address" dest="item_keywords"/>
+
+
+ 2.重启tomcat
+
+
+ 
+ 
+ ./zkcli.sh -zkhost 192.168.25.128:2181,192.168.25.128:2182,192.168.25.128:2183 -cmd upconfig -confdir /usr/local/solr-cloud/solrhome01/collection1/conf/ -confname myconf
+

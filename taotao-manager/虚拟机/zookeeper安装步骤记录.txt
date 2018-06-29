@@ -1,0 +1,7 @@
+zookeeper安装步骤
+1.zookeeper-3.4.6.tar.gz 压缩包上传到服务器上
+2.tar zxf zookeeper-3.4.6.tar.gz
+3.zookeeper-3.4.6  目录下 创建  mkdir  data
+4.更改conf下的zoo_sample.cfg 重命名为 zoo.cfg  mv zoo_sample.cfg zoo.cfg
+5.修改 zoo.cfg 下的  dataDir=/root/zookeeper-3.4.6/data
+6.启动zk  ./zkServer.sh start  ./zkServer.sh stop ./zkServer.sh status
