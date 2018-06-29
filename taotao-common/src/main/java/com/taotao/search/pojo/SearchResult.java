@@ -1,16 +1,26 @@
 package com.taotao.search.pojo;
 
+import java.io.Serializable;
 import java.util.List;
 
-public class SearchResult {
-    public int totalPage;
-    public List<SearchItem> searchItemList;
+public class SearchResult implements Serializable{
+    private long totalPage;
+    private long recordCount;
+    private List<SearchItem> searchItemList;
 
-    public int getTotalPage() {
+    public long getRecordCount() {
+        return recordCount;
+    }
+
+    public void setRecordCount(long recordCount) {
+        this.recordCount = recordCount;
+    }
+
+    public long getTotalPage() {
         return totalPage;
     }
 
-    public void setTotalPage(int totalPage) {
+    public void setTotalPage(long totalPage) {
         this.totalPage = totalPage;
     }
 
