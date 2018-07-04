@@ -32,7 +32,6 @@ public class TestJedis {
 
     @Test
     public void testJedisCluster()throws Exception{
-        HostAndPort hostAndPort = new HostAndPort("192.168.25.128",7001);
         Set<HostAndPort> nodes = new HashSet<HostAndPort>();
         nodes.add(new HostAndPort("192.168.25.128",7001));
         nodes.add(new HostAndPort("192.168.25.128",7002));
