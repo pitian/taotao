@@ -12,8 +12,12 @@ import common.pojo.EasyUIDataGrideResult;
 import common.pojo.TaotaoResult;
 import common.utils.IDUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jms.core.JmsTemplate;
+import org.springframework.jms.core.MessageCreator;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
+import javax.jms.*;
 import java.util.Date;
 import java.util.List;
 
@@ -26,6 +30,10 @@ public class ItemServiceImpl implements ItemService {
     private TbItemMapper tbItemMapper;
     @Autowired
     private TbItemDescMapper tbItemDescMapper;
+    @Autowired
+    private JmsTemplate jmsTemplate;
+    @Resource(name = "itemTopic")
+    private Destination destination;
     @Override
     public TbItem getItemById(long itemId) throws Exception {
         TbItem tbItem = tbItemMapper.selectByPrimaryKey(itemId);
@@ -47,7 +55,7 @@ public class ItemServiceImpl implements ItemService {
     @Override
     public TaotaoResult addItem(TbItem tbItem, String desc) throws Exception {
         //1.生成id年月日时分秒
-        long itemId = IDUtils.genItemId();
+        final long itemId = IDUtils.genItemId();
         tbItem.setId(itemId);
         tbItem.setStatus((byte)1);
         tbItem.setCreated(new Date());
@@ -59,6 +67,14 @@ public class ItemServiceImpl implements ItemService {
         tbItemDesc.setCreated(new Date());
         tbItemDesc.setUpdated(new Date());
         tbItemDescMapper.insert(tbItemDesc);
+        //TODO发送消息
+        jmsTemplate.send(destination, new MessageCreator() {
+            @Override
+            public Message createMessage(Session session) throws JMSException {
+                TextMessage textMessage = session.createTextMessage(itemId+"");
+                return textMessage;
+            }
+        });
         return TaotaoResult.ok();
     }
 }

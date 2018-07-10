@@ -29,7 +29,7 @@
 		<constructor-arg name="name" value="test2-queue"></constructor-arg>
 	</bean>
 
-	<bean id="topicDestination" class="org.apache.activemq.command.ActiveMQTopic">
-		<constructor-arg name="name" value="test2-topic"/>
+	<bean id="itemTopic" class="org.apache.activemq.command.ActiveMQTopic">
+		<constructor-arg name="name" value="item-add-topic"/>
 	</bean>
 </beans>
