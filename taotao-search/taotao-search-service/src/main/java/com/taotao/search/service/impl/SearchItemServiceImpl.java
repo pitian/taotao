@@ -39,6 +39,7 @@ public class SearchItemServiceImpl implements SearchItemService {
                 document.addField("item_category_name",searchItem.getCategory_name());
                 document.addField("item_desc",searchItem.getItem_desc());
                 solrServer.add(document);
+                String s = "a";
             }
             solrServer.commit();
         }catch (Exception e){
