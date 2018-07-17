@@ -3,10 +3,10 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>com.taotao</groupId>
-        <artifactId>taotao-content</artifactId>
+        <artifactId>taotao-sso</artifactId>
         <version>1.0-SNAPSHOT</version>
     </parent>
-    <artifactId>taotao-content-service</artifactId>
+    <artifactId>taotao-sso-service</artifactId>
     <packaging>war</packaging>
     <dependencies>
         <dependency>
@@ -71,7 +71,7 @@
             <groupId>com.github.sgroschupf</groupId>
             <artifactId>zkclient</artifactId>
         </dependency>
-        <!--jedis客户端 -->
+        <!-- Redis客户端 -->
         <dependency>
             <groupId>redis.clients</groupId>
             <artifactId>jedis</artifactId>
